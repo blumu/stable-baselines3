@@ -150,7 +150,12 @@ def get_obs_shape(
         return (int(len(observation_space.nvec)),)
     elif isinstance(observation_space, spaces.MultiBinary):
         # Number of binary features
-        return (int(observation_space.n),)
+        if isinstance(observation_space.n, int):
+            return (observation_space.n, )
+        elif isinstance(observation_space.n, list):
+            return tuple(observation_space.n)
+        else:
+            raise NotSupportedError(f"Unsupported type: {type(observation_space.n)}")
     elif isinstance(observation_space, spaces.Dict):
         return {key: get_obs_shape(subspace) for (key, subspace) in observation_space.spaces.items()}
 
